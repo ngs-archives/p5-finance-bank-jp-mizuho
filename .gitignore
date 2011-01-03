@@ -3,4 +3,5 @@
 config.yml
 META.yml
 Makefile
+.*.swp
 

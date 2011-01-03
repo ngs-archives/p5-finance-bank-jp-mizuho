@@ -60,20 +60,27 @@ sub ua {
 
 sub account_id { shift->{account_id} }
 sub questions  { shift->{questions}  }
-
-sub login_url1 {
+sub password   { shift->{password}   }
+sub logged_in  {
     my $self = shift;
-    my $res = $self->ua->get(START_URL);
-    ( my $url = $res->content ) =~ s%.*url=([^"]+)".*|.*(:?[\r\n]?)%$1%ig;
-    $url
+    $self->{logged_in} = shift if @_;
+    $self->{logged_in};
 }
+
+sub host {
+    my $self = shift;
+    return $self->{host} if $self->{host};
+    ( $self->{host} = $self->get_content(START_URL) ) =~ s%.*url=https://([^/]+)(:?[^"]+)".*|.*(:?[\r\n]?)%$1%ig;
+    $self->{host}
+}
+
+sub login_url1 { 'https://'. shift->host . '/servlet/mib?xtr=Emf00000' }
+sub logout_url { 'https://'. shift->host . ':443/servlet/mib?xtr=EmfLogOff&NLS=JP' }
 
 sub login_url2 {
     my $self = shift;
-    my $res = $self->ua->get($self->login_url1);
-    my $action = $self->form1_action($res->content);
-    $res = $self->ua->post(
-        $action, [
+    my $action = $self->form1_action($self->get_content($self->login_url1));
+    my $res = $self->ua->post( $action, [
         pm_fp => $self->device_fingerprint,
         KeiyakuNo => $self->account_id,
         Next => encode(ENCODING,' 次 へ '),
@@ -81,27 +88,84 @@ sub login_url2 {
     $res->header('location');
 }
 
-sub question1 {
-    my $self = shift;
-    my $res = $self->ua->get($self->login_url2);
-    my $content = decode(ENCODING,$res->content);
-    my $action = $self->form1_action($content),
+sub question {
+    my ($self,$url) = @_;
+    $url ||= $self->login_url2;
+    if($url=~m{xtr=Emf00005}) {
+        $self->login($url);
+        return;
+    }
+    my $content = $self->get_content($url);
+    my $action = $self->form1_action($content);
     my $question = $self->parse_question($content);
-    
+    die 'Failed to parse question screen' unless $question;
+    my $answer = $self->questions->{$question};
+    die "No answer for '$question'" unless $answer;
+    my $res = $self->ua->post( $action, [
+        rskAns => encode(ENCODING, $answer),
+        Next => encode(ENCODING,'　次へ　'),
+        NLS => 'JP',
+        Token => '',
+        jsAware => 'on',
+        frmScrnID => 'Emf00000',
+    ]);
+    my $dest = $res->header('location');
+    warn $dest;
+    die 'Login failure' unless $dest;
+    if($dest eq $url) {
+        $self->question($url);
+    } else {
+        $self->login($dest);
+    }
 }
+
+sub login {
+    my ($self,$url) = @_;
+    my $content = $self->get_content($url);
+    my $action = $self->form1_action($content);
+    my $res = $self->ua->post( $action, [
+        NLS => 'JP',
+        jsAware => 'on',
+        pmimg => '0',
+        Anshu1No => $self->password,
+        login => encode(ENCODING,'　ログイン　'),
+    ]);
+    my $dest = $res->header('location');
+    die 'Login failure' unless $dest;
+    $self->logged_in(1);
+    my $frame = $self->get_content($dest);
+}
+
 
 sub parse_question {
     my ($self,$content) = @_;
-    ( my $q = $content ) =~ s%.*<DIV[^>]*>質問：</DIV>[^\n\r]*[\n\r].*<DIV[^>]*>([^<]+)<.*|.*(:?[\r\n]?)%$1%ig;
+    ( my $q = $content ) =~ s%.*<TD width="200" align="right"><DIV style="font-size:9pt">.+[^\n\r]*[\n\r].*<DIV[^>]*>([^<]+)<.*|.*(:?[\r\n]?)%$1%ig;
     $q
 }
 
-sub logout { shift->ua->cookie_jar->clear }
+sub get_content {
+    my ($self,$url) = @_;
+    my $res = $self->ua->get($url);
+    die $res->status_line unless $res->is_success;
+    decode(ENCODING,$res->content);
+}
+
+sub logout {
+    my $self = shift;
+    return unless $self->logged_in;
+    my $ua = $self->ua;
+    my $res = $ua->get($self->logout_url);
+    $ua->cookie_jar->clear;
+    $self->logged_in(0);
+}
 
 sub form1_action {
     my ($self,$content) = @_;
-    ( my $url = $content ) =~ s%.*action="([^"]+)"[^\n\r]+name="FORM1".*|.*(:?[\r\n]?)%$1%ig;
-    $url
+    my $url;
+    ( $url = $content ) =~ s%.*action="([^"]+)"[^\n\r]+name="FORM1".*|.*(:?[\r\n]?)%$1%ig;
+    return $url if $url;
+    ( $url = $content ) =~ s%.*name="FORM1"[^\n\r]+action="([^"]+)".*|.*(:?[\r\n]?)%$1%ig;
+    $url;
 }
 
 
