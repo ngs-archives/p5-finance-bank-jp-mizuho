@@ -1,0 +1,22 @@
+NAME
+
+    Finance::Bank::JP::Mizuho
+    Check balances and transactions for Mizuho bank accounts
+
+DOCUMENTATION
+
+    After installing, you can find documentation for this module with the
+    perldoc command:
+
+    perldoc Finance::Bank::JP::Mizuho
+
+COPYRIGHT AND LICENCE
+
+    Copyright (C) 2011 Atushi Nagase <ngs@cpan.org>
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of either: the GNU General Public License as published
+    by the Free Software Foundation; or the Artistic License.
+
+    See http://dev.perl.org/licenses/ for more information.
+
