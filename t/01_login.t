@@ -14,6 +14,10 @@ my $config = $config_file ? YAML::LoadFile($config_file) : undef;
 
 {
     is $m->account_id, '12345678';
+    ok !$m->logged_in;
+    $m->logged_in(1);
+    ok $m->logged_in;
+    $m->logged_in(0);
 
     is $m->form1_action(
         qq{<FORM action="https://mydomain.tld/path/to/app.do" name="FORM1" onSubmit="doSomething();return false;">
@@ -42,8 +46,7 @@ my $config = $config_file ? YAML::LoadFile($config_file) : undef;
 
 }
 
-SKIP: {
-
+{
     like
         $m->login_url1,
         qr{^https://web\d*.ib.mizuhobank.co.jp/servlet/mib\?xtr=Emf00000$},
@@ -55,21 +58,29 @@ SKIP: {
         'login url 2';
 
     like
+        $m->list_url,
+        qr{^https://web\d*\.ib\.mizuhobank\.co\.jp/servlet/mib\?xtr=Emf04610&NLS=JP$},
+        'list url';
+
+    like
         $m->logout_url,
         qr{^https://web\d*\.ib\.mizuhobank\.co\.jp:443/servlet/mib\?xtr=EmfLogOff&NLS=JP$},
         'logout url';
 }
+$m->logout;
+
 SKIP: {
     skip 'set MIZUHO_TEST_CONFIG to environment variables', 1 unless $config;
-    $m->logout;
     $m = Finance::Bank::JP::Mizuho->new( %{ $config } );
-    
-    
-    ok 1;
-    $m->question;
+    eval {
+        $m->login;
+    };
+    $m->logout;
+    warn $@ if $@;
+    ok !$@;
+
 }
 
-$m->logout;
 done_testing;
 
 
