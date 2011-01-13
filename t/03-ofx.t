@@ -4,7 +4,6 @@ use FindBin;
 use lib "$FindBin::RealBin/../lib";
 use Test::More;
 use Config::Pit;
-use Data::Dumper;
 
 my $config;
 
@@ -21,10 +20,10 @@ BEGIN {
     $m->login or plan skip_all => 'Login failure';
     
     like $m->host, qr{^web\d*\.ib\.mizuhobank\.co\.jp$}, 'host';
-    ok @{ $m->accounts }, 'number accounts is larger than 0';
+    ok @{ $m->accounts }, 'accounts are more than 0';
     
     ok $m->get_raw_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'Raw OFX';
-    is ref $m->get_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'ARRAY', 'OFS is ARRAY';
+    is ref $m->get_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'ARRAY', 'OFX is an ARRAY';
     
     $m->logout;
 }
