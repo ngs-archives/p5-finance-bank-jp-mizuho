@@ -4,7 +4,7 @@ use inc::Module::Install;
 use Module::Install::ReadmeFromPod;
 
 all_from      'lib/Finance/Bank/JP/Mizuho.pm';
-readme_from   'lib/Finance/Bank/JP/Mizuho.pm';
+# readme_from   'lib/Finance/Bank/JP/Mizuho.pm';
 
 requires      'Carp';
 requires      'DateTime';
