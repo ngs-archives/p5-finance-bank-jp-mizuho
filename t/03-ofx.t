@@ -14,18 +14,25 @@ BEGIN {
     use_ok 'Finance::Bank::JP::Mizuho';
 }
 
-{
+SKIP: {
     my $m = Finance::Bank::JP::Mizuho->new(%$config);
     
-    $m->login or plan skip_all => 'Login failure';
+    skip 'Login failure', 4 unless $m->login;
+
+    eval {
     
-    like $m->host, qr{^web\d*\.ib\.mizuhobank\.co\.jp$}, 'host';
-    ok @{ $m->accounts }, 'accounts are more than 0';
-    
-    ok $m->get_raw_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'Raw OFX';
-    is ref $m->get_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'ARRAY', 'OFX is an ARRAY';
-    
+        like $m->host, qr{^web\d*\.ib\.mizuhobank\.co\.jp$}, 'host';
+        ok @{ $m->accounts }, 'accounts are more than 0';
+        
+        ok $m->get_raw_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'Raw OFX';
+        is ref $m->get_ofx( $m->accounts->[0], $m->SAME_AS_LAST ), 'ARRAY', 'OFX is an ARRAY';
+
+    };
+
     $m->logout;
+
+    fail $@ if $@;
+    
 }
 
 done_testing;
