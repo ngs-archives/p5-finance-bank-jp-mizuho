@@ -3,17 +3,14 @@ use warnings;
 use FindBin;
 use lib "$FindBin::RealBin/../lib";
 use Test::More;
-use Finance::Bank::JP::Mizuho;
-use YAML;
-use Data::Dumper;
 
-my $m = Finance::Bank::JP::Mizuho->new( account_id => '12345678' );
+BEGIN { use_ok 'Finance::Bank::JP::Mizuho' }
+
+my $m = Finance::Bank::JP::Mizuho->new( consumer_id => '12345678' );
 $m->logout;
-my $config_file = $ENV{MIZUHO_TEST_CONFIG};
-my $config = $config_file ? YAML::LoadFile($config_file) : undef;
 
 {
-    is $m->account_id, '12345678';
+    is $m->consumer_id, '12345678';
     ok !$m->logged_in;
     $m->logged_in(1);
     ok $m->logged_in;
@@ -49,7 +46,7 @@ my $config = $config_file ? YAML::LoadFile($config_file) : undef;
 {
     like
         $m->login_url1,
-        qr{^https://web\d*.ib.mizuhobank.co.jp/servlet/mib\?xtr=Emf00000$},
+        qr{^https://web\d*.ib.mizuhobank\.co\.jp/servlet/mib\?xtr=Emf00000$},
         'login url 1';
 
     like
@@ -68,18 +65,6 @@ my $config = $config_file ? YAML::LoadFile($config_file) : undef;
         'logout url';
 }
 $m->logout;
-
-SKIP: {
-    skip 'set MIZUHO_TEST_CONFIG to environment variables', 1 unless $config;
-    $m = Finance::Bank::JP::Mizuho->new( %{ $config } );
-    eval {
-        $m->login;
-    };
-    $m->logout;
-    warn $@ if $@;
-    ok !$@;
-
-}
 
 done_testing;
 

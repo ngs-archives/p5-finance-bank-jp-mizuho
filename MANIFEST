@@ -3,7 +3,9 @@ MANIFEST
 Makefile.PL
 README
 lib/Finance/Bank/JP/Mizuho.pm
+lib/Finance/Bank/JP/Mizuho/Account.pm
 t/00-load.t
-t/pod-coverage.t
-t/pod.t
-META.yml                                 Module meta-data (added by MakeMaker)
+t/01-login.t
+t/02-accounts.t
+t/03-ofx.t
+META.yml
