@@ -18,5 +18,6 @@ test_requires 'Config::Pit';
 test_requires 'FindBin';
 test_requires 'Test::More';
 
+resources( repository => 'https://github.com/ngs/p5-finance-bank-jp-mizuho' );
 
 WriteAll;

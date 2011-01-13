@@ -58,7 +58,7 @@ use Finance::OFX::Parse::Simple;
 use HTTP::Cookies;
 use LWP::UserAgent;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use constant USER_AGENT => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)';
 use constant START_URL  => 'http://www.mizuhobank.co.jp/direct/start.html';
