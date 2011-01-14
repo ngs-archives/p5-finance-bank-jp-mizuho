@@ -1,10 +1,11 @@
 use strict;
 use warnings;
 use inc::Module::Install;
-use Module::Install::ReadmeFromPod;
 
+name          'Finance-Bank-JP-Mizuho';
 all_from      'lib/Finance/Bank/JP/Mizuho.pm';
-# readme_from   'lib/Finance/Bank/JP/Mizuho.pm';
+readme_from   'lib/Finance/Bank/JP/Mizuho.pm';
+readme_markdown_from 'lib/Finance/Bank/JP/Mizuho.pm';
 
 requires      'Carp';
 requires      'DateTime';
@@ -18,6 +19,6 @@ test_requires 'Config::Pit';
 test_requires 'FindBin';
 test_requires 'Test::More';
 
-resources( repository => 'https://github.com/ngs/p5-finance-bank-jp-mizuho' );
+resources( repository => 'http://github.com/ngs/p5-finance-bank-jp-mizuho' );
 
 WriteAll;

@@ -1,4 +1,5 @@
 =encoding utf8
+
 =head1 NAME
 
 Finance::Bank::JP::Mizuho
