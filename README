@@ -39,16 +39,13 @@ FUNCTIONS
 
     %config keys:
 
-    *  consumer_id
-
+     consumer_id
        Consumer id of Mizuho Direct ( お客さま番号 )
 
-    *  password
-
+     password
        Password for your consumer_id
 
-    *  questions
-
+     questions
        Hash reference paired with: Key as Question, Value as Answer
 
   consumer_id
@@ -64,11 +61,9 @@ FUNCTIONS
 
     $term :
 
-    *  "CONTINUATION_FROM_LAST"
-
-    *  "SAME_AS_LAST"
-
-    *  "LAST_TWO_MONTHS"
+    "CONTINUATION_FROM_LAST"
+    "SAME_AS_LAST"
+    "LAST_TWO_MONTHS"
 
     returns list of hash references, parsed by Finance::OFX::Parse::Simple
 

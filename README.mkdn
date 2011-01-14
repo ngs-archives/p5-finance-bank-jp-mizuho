@@ -51,18 +51,15 @@ Creates a new instance.
 
 `%config` keys:
 
-- *
-__consumer_id__
+- __consumer_id__
 
 Consumer id of Mizuho Direct ( お客さま番号 )
 
-- *
-__password__
+- __password__
 
 Password for your consumer_id
 
-- *
-__questions__
+- __questions__
 
 Hash reference paired with: Key as Question, Value as Answer
 
@@ -83,11 +80,11 @@ an instance of [Finance::Bank::JP::Mizuho::Account](http://search.cpan.org/perld
 
 `$term` : 
 
-- * [CONTINUATION_FROM_LAST](#pod_CONTINUATION_FROM_LAST)
+- [CONTINUATION_FROM_LAST](#pod_CONTINUATION_FROM_LAST)
 
-- * [SAME_AS_LAST](#pod_SAME_AS_LAST)
+- [SAME_AS_LAST](#pod_SAME_AS_LAST)
 
-- * [LAST_TWO_MONTHS](#pod_LAST_TWO_MONTHS)
+- [LAST_TWO_MONTHS](#pod_LAST_TWO_MONTHS)
 
 returns list of hash references, parsed by [Finance::OFX::Parse::Simple](http://search.cpan.org/perldoc?Finance::OFX::Parse::Simple)
 
